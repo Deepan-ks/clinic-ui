@@ -226,7 +226,7 @@ export default function BillingPage() {
 
   // load specs
   useEffect(() => {
-    api.get("/api/v1/specializations").then(setSpecs).catch(console.error);
+    api.get("/specializations").then(setSpecs).catch(console.error);
   }, []);
 
   // load doctors + services
@@ -235,8 +235,8 @@ export default function BillingPage() {
     setDoctor(null);
     setCart([]);
     Promise.all([
-      api.get(`/api/v1/doctors?specializationId=${selectedSpec}`),
-      api.get(`/api/v1/services?specializationId=${selectedSpec}`),
+      api.get(`/doctors?specializationId=${selectedSpec}`),
+      api.get(`/services?specializationId=${selectedSpec}`),
     ])
       .then(([d, s]) => {
         setDoctors(d);
@@ -256,7 +256,7 @@ export default function BillingPage() {
     const t = setTimeout(async () => {
       try {
         const res = await api.get(
-          `/api/v1/patients/search?query=${encodeURIComponent(query)}`,
+          `/patients/search?query=${encodeURIComponent(query)}`,
         );
         setResults(Array.isArray(res) ? res : []);
         setShowDrop(true);
@@ -310,7 +310,7 @@ export default function BillingPage() {
     if (!canSubmit || submitting) return;
     setSubmitting(true);
     try {
-      const res = await api.post("/api/v1/bills", {
+      const res = await api.post("/bills", {
         patientId: patient.patientId,
         doctorId: doctor,
         specializationId: selectedSpec,
@@ -373,7 +373,7 @@ export default function BillingPage() {
           <div className="flex-1 min-w-[800px] px-4 py-6 space-y-4">
             {/* PATIENT */}
             <Card label="1  Patient" complete={!!patient}>
-              <div ref={searchRef} className="relative">
+              <div ref={searchRef} className="relative space-y-2">
                 <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all">
                   <span className="text-gray-400 flex-shrink-0">
                     {searching ? <SpinIcon /> : <SearchIcon />}
@@ -398,8 +398,8 @@ export default function BillingPage() {
                 </div>
 
                 {/* Dropdown */}
-                {showDrop && results.length > 0 && (
-                  <div className="absolute z-30 top-full left-0 right-0 mt-1.5 bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden">
+                {showDrop && !patient && results.length > 0 && (
+                  <div className="absolute z-50 top-[calc(100%+6px)] left-0 right-0 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
                     {results.map((p) => (
                       <button
                         key={p.patientId}
@@ -436,7 +436,7 @@ export default function BillingPage() {
               </div>
 
               {patient && (
-                <div className="mt-3 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+                <div className="mt-2 flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 shadow-sm">
                   <Avatar
                     name={patient.name || patient.patientName}
                     size="md"
@@ -464,51 +464,63 @@ export default function BillingPage() {
 
             {/* DOCTOR */}
             <Card label="2  Department & Doctor" complete={!!doctor}>
-              <div className="space-y-3">
-                {specs.length > 0 && (
-                  <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                      Department
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {specs.map((s) => (
-                        <button
-                          key={s.specializationId}
-                          onClick={() => setSelectedSpec(s.specializationId)}
-                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                            selectedSpec === s.specializationId
-                              ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100"
-                              : "bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"
-                          }`}
-                        >
-                          {s.specializationName}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Department */}
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                    Doctor
+                    Department
                   </p>
+
                   <select
-                    value={doctor || ""}
-                    onChange={(e) => setDoctor(Number(e.target.value) || null)}
-                    disabled={!selectedSpec}
-                    className="w-full max-w-sm px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 focus:border-blue-500/30 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed transition-all"
+                    value={selectedSpec || ""}
+                    onChange={(e) => {
+                      setSelectedSpec(Number(e.target.value) || null);
+                      setDoctor(null);
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
                   >
-                    <option value="">
-                      {selectedSpec
-                        ? "Select a doctor"
-                        : "Select department first"}
-                    </option>
-                    {doctors.map((d) => (
-                      <option key={d.doctorId} value={d.doctorId}>
-                        Dr. {d.doctorName}
+                    <option value="">Select department</option>
+                    {specs.map((s) => (
+                      <option
+                        key={s.specializationId}
+                        value={s.specializationId}
+                      >
+                        {s.specializationName}
                       </option>
                     ))}
                   </select>
                 </div>
+
+                {/* Doctor */}
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Doctor
+                  </p>
+
+                  <select
+                    value={doctor || ""}
+                    onChange={(e) => setDoctor(Number(e.target.value) || null)}
+                    disabled={!selectedSpec}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  >
+                    <option value="">
+                      {selectedSpec
+                        ? "Select doctor"
+                        : "Select department first"}
+                    </option>
+
+                    {doctors.map((d) => (
+                      <option key={d.doctorId} value={d.doctorId}>
+                        {d.doctorName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {selectedSpec && !doctor && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Select a doctor for this department
+                  </p>
+                )}
               </div>
             </Card>
 
