@@ -16,7 +16,7 @@ export default function ServiceSearch({
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b">
-        <StepStatus active completed={false} />
+        <StepStatus completed={!!cart.length} />
         <p className="font-semibold text-sm">Add Services</p>
       </div>
 

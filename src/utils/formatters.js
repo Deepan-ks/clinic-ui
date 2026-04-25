@@ -20,6 +20,6 @@ export const AVATAR_COLORS = [
   "bg-cyan-500",
 ];
 
-export const BILL_STEPS = ["Patient", "Doctor", "Services", "Payment"];
+export const BILL_STEPS = ["Patient", "Doctor", "Services", "Invoice"];
 
-export const PAYMENT_MODES = ["CASH", "UPI", "CARD", "INSURANCE"];
+export const PAYMENT_MODES = ["CASH", "UPI"];

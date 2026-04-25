@@ -18,7 +18,7 @@ export function DoctorSelect({
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b">
-        <StepStatus active={!!selectedSpec} completed={!!doctor} />
+        <StepStatus completed={!!doctor} />
         <p className="font-semibold text-sm">Department & Doctor</p>
       </div>
 

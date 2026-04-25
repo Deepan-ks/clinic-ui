@@ -35,7 +35,7 @@ export function PatientSearch({ patient, onSelect }) {
     >
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b">
-        <StepStatus active completed={!!patient} />
+        <StepStatus completed={!!patient} />
         <p className="font-semibold text-sm">Patient</p>
       </div>
 
