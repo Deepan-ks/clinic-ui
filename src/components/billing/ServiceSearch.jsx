@@ -1,6 +1,7 @@
 import { useServiceSearch } from "../../hooks/useServiceSearch";
 import { SearchIcon } from "../icons";
 import { StepStatus } from "../ui/StepStatus";
+import SearchBar from "../ui/SearchBar";
 
 export default function ServiceSearch({
   specializationId,
@@ -20,31 +21,21 @@ export default function ServiceSearch({
         <p className="font-semibold text-sm">Add Services</p>
       </div>
 
-      <div className="p-4">
+      <div className="px-5 py-4 space-y-4">
         {/* Search Input */}
-        <div className="relative mb-3">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <SearchIcon />
-          </span>
-
-          <input
-            type="text"
-            placeholder={
-              specializationId
-                ? "Search services..."
-                : "Select department first"
-            }
-            value={query}
-            disabled={!specializationId}
-            onChange={(e) => setQuery(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
+        <SearchBar
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={
+            specializationId ? "Search services..." : "Select department first"
+          }
+          disabled={!specializationId}
+        />
 
         {/* Frequent */}
         {!showSearchResults && frequent.length > 0 && (
-          <>
-            <p className="text-xs text-gray-400 mb-2">Frequently used</p>
+          <div className="space-y-2">
+            <p className="text-xs text-gray-400">Frequently used</p>
 
             <div className="flex flex-wrap gap-2">
               {frequent.map((s) => (
@@ -56,7 +47,7 @@ export default function ServiceSearch({
                 />
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Search Results */}

@@ -4,6 +4,7 @@ import { usePatientSearch } from "../../hooks/usePatientSearch";
 import { Avatar } from "../ui/Avatar";
 import { SearchIcon, XIcon, SpinIcon } from "../icons";
 import { StepStatus } from "../ui/StepStatus";
+import SearchBar from "../ui/SearchBar";
 
 export function PatientSearch({ patient, onSelect }) {
   const {
@@ -42,28 +43,11 @@ export function PatientSearch({ patient, onSelect }) {
       <div className="px-6 py-5">
         <div ref={searchRef} className="relative space-y-2">
           {/* Search Input */}
-          <div className="flex items-center gap-2.5 px-4 py-3 bg-white border border-gray-200 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all">
-            <span className="text-gray-400 flex-shrink-0">
-              {searching ? <SpinIcon /> : <SearchIcon />}
-            </span>
-            <input
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                if (patient) handleClear();
-              }}
-              placeholder="Search patient by name or phone..."
-              className="flex-1 text-sm text-gray-900 placeholder-gray-400 bg-transparent outline-none"
-            />
-            {query && (
-              <button
-                onClick={handleClear}
-                className="text-gray-300 hover:text-gray-500 flex-shrink-0 transition-colors"
-              >
-                <XIcon />
-              </button>
-            )}
-          </div>
+          <SearchBar
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search patient by name or phone..."
+          />
 
           {/* Dropdown Results */}
           {showDrop && !patient && results.length > 0 && (
