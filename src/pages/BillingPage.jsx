@@ -60,7 +60,8 @@ export default function BillingPage() {
 
             <ServiceSearch
               specializationId={billing.selectedSpec}
-              onSelect={(service) => billing.addToCart(service)}
+              onSelect={billing.addToCart}
+              cart={billing.cart}
             />
 
             <ServiceCart cart={billing.cart} setQty={billing.setQty} />

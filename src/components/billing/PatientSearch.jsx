@@ -3,6 +3,7 @@
 import { usePatientSearch } from "../../hooks/usePatientSearch";
 import { Avatar } from "../ui/Avatar";
 import { SearchIcon, XIcon, SpinIcon } from "../icons";
+import { StepStatus } from "../ui/StepStatus";
 
 export function PatientSearch({ patient, onSelect }) {
   const {
@@ -33,35 +34,9 @@ export function PatientSearch({ patient, onSelect }) {
       }`}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 px-5 py-3 border-b border-gray-100">
-        <div
-          className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-            patient ? "bg-emerald-500" : "bg-gray-200"
-          }`}
-        >
-          {patient && (
-            <svg
-              className="w-3 h-3 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          )}
-        </div>
-        <h3
-          className={`text-sm font-bold tracking-tight ${
-            patient ? "text-emerald-700" : "text-gray-700"
-          }`}
-        >
-          1 Patient
-        </h3>
+      <div className="flex items-center gap-2 px-4 py-3 border-b">
+        <StepStatus active completed={!!patient} />
+        <p className="font-semibold text-sm">Patient</p>
       </div>
 
       <div className="px-6 py-5">

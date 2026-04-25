@@ -6,26 +6,30 @@ export function useCart() {
   const [cart, setCart] = useState([]);
 
   const addToCart = useCallback((service) => {
-    setCart((prev) => {
-      const exists = prev.find((item) => item.id === service.serviceId);
-      if (exists) {
-        return prev.map((item) =>
-          item.id === service.serviceId
-            ? { ...item, qty: item.qty + 1 }
-            : item
-        );
-      }
-      return [
-        ...prev,
-        {
-          id: service.id,
-          name: service.name,
-          price: service.price,
-          qty: 1,
-        },
-      ];
-    });
-  }, []);
+  const id = service.id || service.serviceId;
+
+  setCart((prev) => {
+    const exists = prev.find((item) => item.id === id);
+
+    if (exists) {
+      return prev.map((item) =>
+        item.id === id
+          ? { ...item, qty: item.qty + 1 }
+          : item
+      );
+    }
+
+    return [
+      ...prev,
+      {
+        id: id,
+        name: service.name || service.serviceName,
+        price: service.price,
+        qty: 1,
+      },
+    ];
+  });
+}, []);
 
   const setQty = useCallback((id, qty) => {
     setCart((prev) => {

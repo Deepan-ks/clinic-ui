@@ -2,6 +2,7 @@
 
 import { XIcon, ReceiptIcon } from "../icons";
 import { fmt } from "../../utils/formatters";
+import { StepStatus } from "../ui/StepStatus";
 
 export function ServiceCart({ cart, setQty }) {
   const hasItems = cart.length > 0;
@@ -13,40 +14,12 @@ export function ServiceCart({ cart, setQty }) {
       }`}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 px-5 py-3 border-b border-gray-100">
-        <div
-          className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
-            hasItems ? "bg-emerald-500" : "bg-gray-200"
-          }`}
-        >
-          {hasItems && (
-            <svg
-              className="w-3 h-3 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          )}
-        </div>
-        <h3
-          className={`text-sm font-bold tracking-tight ${
-            hasItems ? "text-emerald-700" : "text-gray-700"
-          }`}
-        >
-          3 Services
-        </h3>
+      <div className="flex items-center gap-2 px-4 py-3 border-b">
+        <StepStatus completed={cart.length > 0} />
+        <p className="font-semibold text-sm">Services</p>
       </div>
 
       <div className="px-6 py-5 space-y-3">
-        {/* Service Buttons */}
-
         {/* Cart Table */}
         <div className="rounded-xl border border-gray-200 overflow-hidden">
           <div className="grid grid-cols-12 px-5 py-2.5 bg-gray-50 border-b border-gray-200 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
