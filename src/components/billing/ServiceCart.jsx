@@ -3,15 +3,7 @@
 import { XIcon, ReceiptIcon } from "../icons";
 import { fmt } from "../../utils/formatters";
 
-export function ServiceCart({
-  cart,
-  onCartChange,
-  selectedSpec,
-  servicesList,
-  addToCart,
-  setQty,
-}) {
-  const hasServices = servicesList.length > 0;
+export function ServiceCart({ cart, setQty }) {
   const hasItems = cart.length > 0;
 
   return (
@@ -54,49 +46,6 @@ export function ServiceCart({
 
       <div className="px-6 py-5 space-y-3">
         {/* Service Buttons */}
-        {hasServices ? (
-          <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Click to add
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {servicesList.map((s) => {
-                const inCart = cart.find((item) => item.id === s.serviceId);
-                return (
-                  <button
-                    key={s.serviceId}
-                    onClick={() => addToCart(s)}
-                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-sm font-medium transition-all ${
-                      inCart
-                        ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100"
-                        : "bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:bg-blue-50"
-                    }`}
-                  >
-                    <span>{s.serviceName}</span>
-                    <span
-                      className={`text-xs ${inCart ? "text-blue-200" : "text-gray-400"}`}
-                    >
-                      ₹{s.price}
-                    </span>
-                    {inCart && (
-                      <span className="ml-0.5 bg-white/25 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                        {inCart.qty}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : selectedSpec ? (
-          <p className="text-sm text-gray-400">
-            No services for this department.
-          </p>
-        ) : (
-          <p className="text-sm text-gray-400">
-            Select a department to see services.
-          </p>
-        )}
 
         {/* Cart Table */}
         <div className="rounded-xl border border-gray-200 overflow-hidden">
@@ -114,7 +63,7 @@ export function ServiceCart({
                 No services added
               </p>
               <p className="text-xs text-gray-300 mt-1">
-                Add from the buttons above
+                Search and add services above
               </p>
             </div>
           ) : (

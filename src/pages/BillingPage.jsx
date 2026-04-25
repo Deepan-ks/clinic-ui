@@ -6,6 +6,7 @@ import { PatientSearch } from "../components/billing/PatientSearch";
 import { DoctorSelect } from "../components/billing/DoctorSelect";
 import { ServiceCart } from "../components/billing/ServiceCart";
 import { BillSummary } from "../components/billing/BillSummary";
+import ServiceSearch from "../components/billing/ServiceSearch";
 import { CheckIcon } from "../components/icons";
 
 export default function BillingPage() {
@@ -56,14 +57,13 @@ export default function BillingPage() {
               specs={billing.specs}
               doctors={billing.doctors}
             />
-            <ServiceCart
-              cart={billing.cart}
-              onCartChange={billing.setCart}
-              selectedSpec={billing.selectedSpec}
-              servicesList={billing.servicesList}
-              addToCart={billing.addToCart}
-              setQty={billing.setQty}
+
+            <ServiceSearch
+              specializationId={billing.selectedSpec}
+              onSelect={(service) => billing.addToCart(service)}
             />
+
+            <ServiceCart cart={billing.cart} setQty={billing.setQty} />
           </div>
 
           {/* Right Panel - Summary */}

@@ -18,8 +18,8 @@ export function useCart() {
       return [
         ...prev,
         {
-          id: service.serviceId,
-          name: service.serviceName,
+          id: service.id,
+          name: service.name,
           price: service.price,
           qty: 1,
         },
