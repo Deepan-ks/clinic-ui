@@ -13,17 +13,23 @@ export default function BillRow({ bill, downloadingId, onView, onDownload }) {
   const billNumber = bill.billNumber ?? bill.invoiceNumber ?? "-";
   const patientName = bill.patientName ?? bill.patient?.name ?? "-";
   const phone = bill.patientPhone ?? bill.phone ?? bill.patient?.phone ?? "-";
-  const createdAt = bill.createdAt ?? bill.billDate ?? bill.date;
-  const total = bill.totalAmount ?? bill.total ?? bill.netAmount ?? 0;
+  const createdAt = bill.createdTime ?? "-";
+  const total = bill.grandTotal ?? 0;
   const isDownloading = Boolean(id && downloadingId === id);
 
   return (
     <tr className="border-b border-gray-100 last:border-0">
-      <td className="px-4 py-3 text-sm text-gray-700 font-medium">{billNumber}</td>
+      <td className="px-4 py-3 text-sm text-gray-700 font-medium">
+        {billNumber}
+      </td>
       <td className="px-4 py-3 text-sm text-gray-700">{patientName}</td>
       <td className="px-4 py-3 text-sm text-gray-500">{phone}</td>
-      <td className="px-4 py-3 text-sm text-gray-500">{formatDate(createdAt)}</td>
-      <td className="px-4 py-3 text-sm text-gray-700 font-semibold">{fmt(total)}</td>
+      <td className="px-4 py-3 text-sm text-gray-500">
+        {formatDate(createdAt)}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-700 font-semibold">
+        {fmt(total)}
+      </td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <button
@@ -47,4 +53,3 @@ export default function BillRow({ bill, downloadingId, onView, onDownload }) {
     </tr>
   );
 }
-
