@@ -14,3 +14,25 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Clinic UI Routes
+
+- `/billing` - Create a new bill
+- `/bills` - Bill history with search/date filters
+- `/bills/:billId` - Bill detail with line items and totals
+
+## Recent UX Features
+
+- Bill detail view with summary card, services table, and totals
+- Quick add patient modal directly from patient search
+- Shared loading components (`LoadingButton`, `TableSkeleton`)
+- Global toast notifications for success and error feedback
+- Inline form validation errors for patient creation
+
+## Run
+
+```bash
+npm install
+npm run dev
+```
+

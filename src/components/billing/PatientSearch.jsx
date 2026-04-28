@@ -1,12 +1,15 @@
 // ── PATIENT SEARCH COMPONENT ─────────────────────────────────────
 
+import { useState } from "react";
 import { usePatientSearch } from "../../hooks/usePatientSearch";
 import { Avatar } from "../ui/Avatar";
-import { SearchIcon, XIcon, SpinIcon } from "../icons";
+import { XIcon } from "../icons";
 import { StepStatus } from "../ui/StepStatus";
 import SearchBar from "../ui/SearchBar";
+import AddPatientModal from "../patients/AddPatientModal";
 
 export function PatientSearch({ patient, onSelect }) {
+  const [showAddModal, setShowAddModal] = useState(false);
   const {
     query,
     setQuery,
@@ -14,6 +17,7 @@ export function PatientSearch({ patient, onSelect }) {
     showDrop,
     searching,
     searchRef,
+    setShowDrop,
     pickPatient,
     clearPatient,
   } = usePatientSearch();
@@ -26,6 +30,14 @@ export function PatientSearch({ patient, onSelect }) {
   const handleClear = () => {
     const cleared = clearPatient();
     onSelect(cleared);
+  };
+
+  const handleCreated = (createdPatient) => {
+    const selected = pickPatient(createdPatient);
+    onSelect(selected);
+    setShowDrop(false);
+    setShowAddModal(false);
+    setQuery(createdPatient.name || createdPatient.patientName || "");
   };
 
   return (
@@ -48,6 +60,16 @@ export function PatientSearch({ patient, onSelect }) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search patient by name or phone..."
           />
+
+          {!patient && query.trim().length === 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="text-xs font-semibold text-blue-600 hover:text-blue-700"
+            >
+              + Add Patient
+            </button>
+          )}
 
           {/* Dropdown Results */}
           {showDrop && !patient && results.length > 0 && (
@@ -84,6 +106,13 @@ export function PatientSearch({ patient, onSelect }) {
                 <p className="text-xs text-gray-400 mt-0.5">
                   Try a different name or number
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(true)}
+                  className="mt-2 text-xs font-semibold text-blue-600 hover:text-blue-700"
+                >
+                  + Add Patient
+                </button>
               </div>
             )}
         </div>
@@ -112,6 +141,12 @@ export function PatientSearch({ patient, onSelect }) {
           </div>
         )}
       </div>
+
+      <AddPatientModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onCreated={handleCreated}
+      />
     </div>
   );
 }

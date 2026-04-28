@@ -1,6 +1,6 @@
 // ── BILL SUMMARY COMPONENT ─────────────────────────────────────
 
-import { SpinIcon, CheckIcon } from "../icons";
+import LoadingButton from "../common/LoadingButton";
 import { fmt, PAYMENT_MODES } from "../../utils/formatters";
 
 function SummaryRow({ label, value, placeholder, done }) {
@@ -42,7 +42,7 @@ export function BillSummary({
   const itemCount = totalItems;
 
   return (
-    <div className="w-[600px] max-w-[420px] flex-shrink-0 bg-white border border-gray-200 rounded-xl h-fit sticky top-6 shadow-sm">
+    <div className="w-full xl:w-[420px] xl:flex-shrink-0 bg-white border border-gray-200 rounded-xl h-fit xl:sticky xl:top-6 shadow-sm">
       <div className="p-6 space-y-5 flex flex-col min-h-full">
         <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
           Bill Summary
@@ -184,23 +184,18 @@ export function BillSummary({
         </div>
 
         {/* Submit Button */}
-        <button
+        <LoadingButton
           onClick={handleSubmit}
-          disabled={!canSubmit || submitting}
+          isLoading={submitting}
+          disabled={!canSubmit}
+          label="Generate Invoice"
+          loadingLabel="Generating..."
           className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all ${
             canSubmit && !submitting
               ? "bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md active:scale-[0.98]"
               : "bg-gray-100 text-gray-400 cursor-not-allowed"
           }`}
-        >
-          {submitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <SpinIcon /> Generating...
-            </span>
-          ) : (
-            "Generate Invoice"
-          )}
-        </button>
+        />
 
         {/* Missing Items */}
         {!canSubmit && (
