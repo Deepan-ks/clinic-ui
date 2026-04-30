@@ -17,4 +17,15 @@ export const api = {
     if (!res.ok) throw new Error("API error");
     return res.json();
   },
+
+  put: async (url, body) => {
+    const res = await fetch(`${BASE_URL}${url}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) throw new Error("API error");
+    return res.json();
+  },
 };

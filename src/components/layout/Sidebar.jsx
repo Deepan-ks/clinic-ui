@@ -20,6 +20,9 @@ export default function Sidebar() {
           <NavLink to="/bills" className={navClassName}>
             Bill History
           </NavLink>
+          <NavLink to="/patients" className={navClassName}>
+            Patients
+          </NavLink>
         </nav>
       </div>
 
