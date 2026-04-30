@@ -18,34 +18,42 @@ export default function BillsPage() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
+  // ── Filter state ─────────────────────────────────────────────────
   const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [date, setDate] = useState("");
+  const [search, setSearch] = useState("");          // debounced
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [downloadingId, setDownloadingId] = useState(null);
 
+  // ── 300ms debounce on search input ───────────────────────────────
   useEffect(() => {
-    const timer = setTimeout(() => setSearch(searchInput.trim()), 350);
+    const timer = setTimeout(() => setSearch(searchInput.trim()), 300);
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  // ── Build query string ────────────────────────────────────────────
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (date) params.set("date", date);
+    if (search)   params.set("search",   search);
+    if (fromDate) params.set("fromDate", fromDate);
+    if (toDate)   params.set("toDate",   toDate);
     params.set("page", "0");
-    params.set("size", "20");
+    params.set("size", "50");
     return params.toString();
-  }, [search, date]);
+  }, [search, fromDate, toDate]);
 
+  // ── Fetch bills ───────────────────────────────────────────────────
   useEffect(() => {
+    // Don't fetch until the date range has been initialised by DateFilter
+    if (!fromDate && !toDate) return;
+
     let cancelled = false;
 
     const loadBills = async () => {
       setLoading(true);
-
       try {
         const response = await api.get(`/bills?${queryString}`);
         if (cancelled) return;
@@ -63,11 +71,16 @@ export default function BillsPage() {
     };
 
     loadBills();
-    return () => {
-      cancelled = true;
-    };
-  }, [queryString, addToast]);
+    return () => { cancelled = true; };
+  }, [queryString, fromDate, toDate, addToast]);
 
+  // ── Handler from DateFilter ───────────────────────────────────────
+  const handleRangeChange = (from, to) => {
+    setFromDate(from);
+    setToDate(to);
+  };
+
+  // ── View + Download ───────────────────────────────────────────────
   const handleView = (billId) => {
     if (!billId) return;
     navigate(`/bills/${billId}`);
@@ -76,7 +89,6 @@ export default function BillsPage() {
   const handleDownload = async (billId, billNumber) => {
     if (!billId || downloadingId) return;
     setDownloadingId(billId);
-
     try {
       const response = await fetch(`${BASE_URL}/bills/${billId}/invoice`);
       if (!response.ok) {
@@ -84,11 +96,9 @@ export default function BillsPage() {
         setDownloadingId(null);
         return;
       }
-
       const blob = await response.blob();
       const downloadUrl = globalThis.URL.createObjectURL(blob);
       const link = document.createElement("a");
-
       link.href = downloadUrl;
       link.download = `invoice-${billNumber || billId}.pdf`;
       document.body.appendChild(link);
@@ -114,9 +124,9 @@ export default function BillsPage() {
       <div className="p-6 space-y-4">
         <BillsFilterBar
           search={searchInput}
-          date={date}
           onSearchChange={setSearchInput}
-          onDateChange={setDate}
+          onRangeChange={handleRangeChange}
+          disabled={loading}
         />
 
         <BillsTable
@@ -130,4 +140,3 @@ export default function BillsPage() {
     </div>
   );
 }
-
