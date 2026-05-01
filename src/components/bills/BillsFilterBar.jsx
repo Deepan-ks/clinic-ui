@@ -8,25 +8,18 @@ export default function BillsFilterBar({
   disabled = false,
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div className="bg-white border border-gray-200 rounded-xl p-3 flex flex-col md:flex-row md:items-center gap-4">
       {/* Search */}
-      <div className="w-full lg:max-w-sm">
-        <label className="block text-xs font-semibold text-gray-500 mb-1.5">
-          Search (Patient Name / Phone)
-        </label>
+      <div className="flex-1 max-w-sm">
         <SearchBar
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Type patient name or phone"
-          disabled={disabled}
+          placeholder="Search patient or phone..."
         />
       </div>
 
       {/* Date filter */}
-      <div className="flex flex-col gap-1">
-        <label className="block text-xs font-semibold text-gray-500 mb-0.5">
-          Date Range
-        </label>
+      <div className="flex items-center gap-2">
         <DateFilter onRangeChange={onRangeChange} disabled={disabled} />
       </div>
     </div>

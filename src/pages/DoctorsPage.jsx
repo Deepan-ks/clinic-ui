@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
+import { normalizeDoctors, normalizeSpecializations, normalizeDoctor } from "../api/normalizers";
 import DoctorsTable from "../components/doctors/DoctorsTable";
 import DoctorFormModal from "../components/doctors/DoctorFormModal";
 import { useToast } from "../hooks/useToast";
-
-function normalizeList(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.content)) return payload.content;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
-}
 
 export default function DoctorsPage() {
   const { addToast } = useToast();
@@ -21,41 +15,46 @@ export default function DoctorsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState(null);
 
-  // ── Load doctors + specializations ───────────────────────────────
+  // ── Load doctors + specializations independently ──────────────────
+  // Using Promise.allSettled so a failing specializations call does NOT
+  // block doctor list from loading.
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([
+    Promise.allSettled([
       api.get("/doctors"),
       api.get("/specializations"),
-    ])
-      .then(([docRes, specRes]) => {
-        if (!cancelled) {
-          setDoctors(normalizeList(docRes));
-          setSpecializations(normalizeList(specRes));
-        }
-      })
-      .catch(() => {
-        if (!cancelled)
-          addToast({ type: "error", message: "Unable to load doctors." });
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    ]).then(([docResult, specResult]) => {
+      if (cancelled) return;
+
+      if (docResult.status === "fulfilled") {
+        setDoctors(normalizeDoctors(docResult.value));
+      } else {
+        addToast({ type: "error", message: "Unable to load doctors." });
+      }
+
+      if (specResult.status === "fulfilled") {
+        setSpecializations(normalizeSpecializations(specResult.value));
+      }
+      // Specializations failure is silent — dropdown just stays empty
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
 
     return () => { cancelled = true; };
   }, [addToast]);
 
   // ── Modal handlers ────────────────────────────────────────────────
-  const handleAdd = () => { setEditingDoctor(null); setModalOpen(true); };
-  const handleEdit = (doc) => { setEditingDoctor(doc); setModalOpen(true); };
+  const handleAdd   = () => { setEditingDoctor(null); setModalOpen(true); };
+  const handleEdit  = (doc) => { setEditingDoctor(doc); setModalOpen(true); };
   const handleClose = () => { setModalOpen(false); setEditingDoctor(null); };
 
   const handleSaved = (saved, isEdit) => {
+    const norm = normalizeDoctor(saved);
     if (isEdit) {
-      setDoctors((prev) => prev.map((d) => (d.id === saved.id ? saved : d)));
+      setDoctors((prev) => prev.map((d) => (d.id === norm.id ? norm : d)));
     } else {
-      setDoctors((prev) => [saved, ...prev]);
+      setDoctors((prev) => [norm, ...prev]);
     }
   };
 

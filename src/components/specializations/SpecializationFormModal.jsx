@@ -3,6 +3,7 @@ import { api } from "../../api/api";
 import LoadingButton from "../common/LoadingButton";
 import FormError from "../common/FormError";
 import { useToast } from "../../hooks/useToast";
+import { validateRequiredName } from "../../utils/validators";
 
 const INITIAL_FORM = { name: "" };
 
@@ -37,8 +38,10 @@ export default function SpecializationFormModal({
   const validate = () => {
     const nextErrors = {};
     const trimmed = form.name.trim();
-    if (!trimmed) {
-      nextErrors.name = "Name is required";
+    // Standard name rules first
+    const nameErr = validateRequiredName(trimmed, "Specialization name");
+    if (nameErr) {
+      nextErrors.name = nameErr;
     } else {
       // Duplicate check (case-insensitive), exclude self when editing
       const lower = trimmed.toLowerCase();
@@ -63,7 +66,7 @@ export default function SpecializationFormModal({
     if (!validate()) return;
     setSubmitting(true);
     try {
-      const payload = { name: form.name.trim() };
+      const payload = { name: form.name.trim(), status: "ACTIVE" };
       let saved;
       if (isEdit) {
         saved = await api.put(`/specializations/${specialization.id}`, payload);

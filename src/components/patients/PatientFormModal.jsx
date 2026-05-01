@@ -3,6 +3,15 @@ import { api } from "../../api/api";
 import LoadingButton from "../common/LoadingButton";
 import FormError from "../common/FormError";
 import { useToast } from "../../hooks/useToast";
+import {
+  validateRequiredName,
+  validatePhone,
+  validateAge,
+  validateEmail,
+  validateRequired,
+  digitsOnly,
+  runValidations,
+} from "../../utils/validators";
 
 const INITIAL_FORM = {
   name: "",
@@ -18,7 +27,7 @@ function buildPayload(form) {
     name: form.name.trim(),
     phone: form.phone.trim(),
     age: form.age !== "" ? Number(form.age) : null,
-    gender: form.gender || null,
+    gender: form.gender,           // @NotBlank — never send null
     address: form.address.trim(),
     email: form.email.trim() || null,
   };
@@ -55,9 +64,11 @@ export default function PatientFormModal({ open, patient, onClose, onSaved }) {
   const canSubmit = useMemo(
     () =>
       Boolean(
-        form.name.trim() &&
+        form.name.trim().length >= 2 &&
           form.phone.trim() &&
           form.age !== "" &&
+          Number(form.age) >= 0 &&
+          Number(form.age) <= 150 &&
           form.gender &&
           form.address.trim(),
       ),
@@ -69,22 +80,21 @@ export default function PatientFormModal({ open, patient, onClose, onSaved }) {
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
+  // Strip non-digits from phone and age at input time
+  const handlePhoneChange = (value) =>
+    handleFieldChange("phone", digitsOnly(value));
+  const handleAgeChange = (value) =>
+    handleFieldChange("age", digitsOnly(value).slice(0, 3)); // max 3 digits
+
   const validate = () => {
-    const nextErrors = {};
-    if (!form.name.trim()) nextErrors.name = "Name is required";
-    if (!form.phone.trim()) nextErrors.phone = "Phone is required";
-    else if (!/^\d{7,15}$/.test(form.phone.trim()))
-      nextErrors.phone = "Enter a valid phone number (7–15 digits)";
-    if (form.age === "") nextErrors.age = "Age is required";
-    else if (isNaN(Number(form.age)) || Number(form.age) < 0)
-      nextErrors.age = "Age must be a positive number";
-    if (!form.gender) nextErrors.gender = "Gender is required";
-    if (!form.address.trim()) nextErrors.address = "Address is required";
-    if (
-      form.email.trim() &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
-    )
-      nextErrors.email = "Enter a valid email address";
+    const nextErrors = runValidations({
+      name:    () => validateRequiredName(form.name, "Full name"),
+      phone:   () => validatePhone(form.phone, true),   // exactly 10 digits (backend @Pattern(\\d{10}))
+      age:     () => validateAge(form.age),
+      gender:  () => validateRequired(form.gender, "Gender"),
+      address: () => validateRequired(form.address, "Address"),
+      email:   () => validateEmail(form.email),
+    });
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -209,13 +219,13 @@ export default function PatientFormModal({ open, patient, onClose, onSaved }) {
               </label>
               <input
                 id="patient-age"
-                type="number"
-                min="0"
-                max="150"
+                type="text"
+                inputMode="numeric"
                 value={form.age}
-                onChange={(e) => handleFieldChange("age", e.target.value)}
+                onChange={(e) => handleAgeChange(e.target.value)}
                 className={inputCls("age")}
                 placeholder="Age"
+                maxLength={3}
               />
               <FormError message={errors.age} />
             </div>
@@ -253,11 +263,13 @@ export default function PatientFormModal({ open, patient, onClose, onSaved }) {
             <input
               id="patient-phone"
               type="tel"
+              inputMode="numeric"
               value={form.phone}
-              onChange={(e) => handleFieldChange("phone", e.target.value)}
+              onChange={(e) => handlePhoneChange(e.target.value)}
               className={inputCls("phone")}
-              placeholder="Phone number"
+              placeholder="10-digit phone number"
               autoComplete="off"
+              maxLength={10}
             />
             <FormError message={errors.phone} />
           </div>

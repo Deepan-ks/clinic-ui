@@ -15,40 +15,41 @@ export default function BillItemsTable({ items, loading }) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[700px] border-collapse">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                 Service
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider w-32">
                 Quantity
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-40">
                 Price
               </th>
-              <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider w-40">
                 Total
               </th>
             </tr>
           </thead>
-        </table>
-      </div>
-
-      <div className="max-h-[420px] overflow-auto">
-        <table className="w-full min-w-[700px] border-collapse">
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {items.map((item, index) => (
               <tr
                 key={`${item.id ?? item.name ?? "item"}-${index}`}
-                className="border-b border-gray-100 last:border-0"
+                className="hover:bg-gray-50/50 transition-colors"
               >
-                <td className="px-4 py-3 text-sm text-gray-700">{item.name || "-"}</td>
-                <td className="px-4 py-3 text-sm text-gray-600 text-right">{item.quantity}</td>
-                <td className="px-4 py-3 text-sm text-gray-600 text-right">{fmt(item.price)}</td>
-                <td className="px-4 py-3 text-sm font-semibold text-gray-800 text-right">
+                <td className="px-6 py-4 text-sm text-gray-700 font-medium">
+                  {item.name || "-"}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-600 text-center">
+                  {item.quantity}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-600 text-right tabular-nums">
+                  {fmt(item.price)}
+                </td>
+                <td className="px-6 py-4 text-sm font-bold text-gray-900 text-right tabular-nums">
                   {fmt(item.total)}
                 </td>
               </tr>
@@ -59,4 +60,3 @@ export default function BillItemsTable({ items, loading }) {
     </div>
   );
 }
-

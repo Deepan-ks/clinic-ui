@@ -40,7 +40,7 @@ function normalizeBill(payload) {
     billNumber: payload?.billNumber ?? payload?.invoiceNumber ?? "-",
     patientName: payload?.patientName ?? payload?.patient?.name ?? payload?.patient?.patientName ?? "-",
     doctorName: payload?.doctorName ?? payload?.doctor?.name ?? payload?.doctor?.doctorName ?? "-",
-    date: payload?.createdAt ?? payload?.billDate ?? payload?.date ?? null,
+    date: payload?.createdTime ?? payload?.createdAt ?? payload?.billDate ?? payload?.date ?? null,
     items,
     subtotal,
     discount,

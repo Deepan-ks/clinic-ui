@@ -13,7 +13,13 @@ function fmt(n) {
   return "₹" + Number(n || 0).toFixed(2);
 }
 
-export default function ServicesTable({ services, loading, onEdit }) {
+export default function ServicesTable({ services, loading, onEdit, specializations = [] }) {
+  // Build a quick-lookup map id → name so we can resolve names even when
+  // the API only returns specializationId (not specializationName)
+  const specMap = Object.fromEntries(
+    specializations.map((s) => [String(s.id), s.name]),
+  );
+
   if (loading) return <TableSkeleton columns={5} rows={8} />;
 
   if (!services.length) {
@@ -57,8 +63,9 @@ export default function ServicesTable({ services, loading, onEdit }) {
         <tbody>
           {services.map((svc, idx) => {
             const specName =
-              svc.specializationName ??
-              svc.specialization?.name ??
+              svc.specializationName ||
+              svc.specialization?.name ||
+              specMap[String(svc.specializationId)] ||
               "—";
             const active = svc.active ?? svc.isActive ?? true;
 

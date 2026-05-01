@@ -81,14 +81,17 @@ export function useBilling() {
     setSubmitting(true);
     try {
       const res = await api.post("/bills", {
-        patientId: patient.patientId,
+        patientId: patient.id ?? patient.patientId,      // normalised or raw
         doctorId: doctor,
         doctorName: doctorName,
         specializationId: selectedSpec,
         paymentMode,
         discountAmount: Number(discountAmt || 0),
         discountPercent: Number(discountPct || 0),
-        items: cart.map((item) => ({ serviceId: item.id, quantity: item.qty })),
+        items: cart.map((item) => ({
+          serviceId: item.id ?? item.serviceId,           // normalised or raw
+          quantity: item.qty,
+        })),
       });
 
       // Download PDF

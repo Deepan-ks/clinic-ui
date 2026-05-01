@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
+import { normalizeSpecializations } from "../api/normalizers";
 import SpecializationList from "../components/specializations/SpecializationList";
 import SpecializationFormModal from "../components/specializations/SpecializationFormModal";
 import { useToast } from "../hooks/useToast";
@@ -17,14 +18,7 @@ export default function SpecializationsPage() {
     api
       .get("/specializations")
       .then((res) => {
-        if (!cancelled) {
-          const list = Array.isArray(res)
-            ? res
-            : Array.isArray(res?.content)
-            ? res.content
-            : [];
-          setSpecializations(list);
-        }
+        if (!cancelled) setSpecializations(normalizeSpecializations(res));
       })
       .catch(() => {
         if (!cancelled)
@@ -38,21 +32,22 @@ export default function SpecializationsPage() {
 
   const existingNames = specializations.map((s) => s.name);
 
-  const handleAdd = () => { setEditing(null); setModalOpen(true); };
-  const handleEdit = (spec) => { setEditing(spec); setModalOpen(true); };
+  const handleAdd   = () => { setEditing(null); setModalOpen(true); };
+  const handleEdit  = (spec) => { setEditing(spec); setModalOpen(true); };
   const handleClose = () => { setModalOpen(false); setEditing(null); };
 
   const handleSaved = (saved, isEdit) => {
+    // Normalise the response from POST/PUT too
+    const norm = { ...saved, id: saved.id ?? saved.specializationId, name: saved.name ?? saved.specializationName ?? "" };
     if (isEdit) {
-      setSpecializations((prev) => prev.map((s) => (s.id === saved.id ? saved : s)));
+      setSpecializations((prev) => prev.map((s) => (s.id === norm.id ? norm : s)));
     } else {
-      setSpecializations((prev) => [...prev, saved]);
+      setSpecializations((prev) => [...prev, norm]);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
-      {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Specializations</h1>

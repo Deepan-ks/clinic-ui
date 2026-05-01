@@ -3,12 +3,18 @@ import { api } from "../../api/api";
 import LoadingButton from "../common/LoadingButton";
 import FormError from "../common/FormError";
 import { useToast } from "../../hooks/useToast";
+import {
+  validateRequiredName,
+  validatePhone,
+  digitsOnly,
+  runValidations,
+} from "../../utils/validators";
 
 const INITIAL_FORM = {
   name: "",
   phone: "",
   specializationId: "",
-  active: true,
+  status: "ACTIVE",
 };
 
 export default function DoctorFormModal({
@@ -29,10 +35,10 @@ export default function DoctorFormModal({
     if (open) {
       if (doctor) {
         setForm({
-          name: doctor.doctorName ?? "",
+          name: doctor.name ?? "",
           phone: doctor.phone ?? "",
-          specializationId: doctor.specializationId ?? "",
-          active: doctor.active ?? doctor.isActive ?? true,
+          specializationId: String(doctor.specializationId ?? ""),
+          status: doctor.status ?? "ACTIVE",
         });
       } else {
         setForm(INITIAL_FORM);
@@ -41,21 +47,32 @@ export default function DoctorFormModal({
     }
   }, [open, doctor]);
 
-  const canSubmit = useMemo(() => Boolean(form.name.trim()), [form.name]);
+  const canSubmit = useMemo(
+    () =>
+      Boolean(
+        form.name.trim().length >= 2 &&
+          form.phone.trim() &&
+          form.specializationId,
+      ),
+    [form.name, form.phone, form.specializationId],
+  );
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
+  // Strip non-digits so alphabets cannot be typed in phone field
+  const handlePhoneChange = (value) =>
+    handleChange("phone", digitsOnly(value));
+
   const validate = () => {
-    const nextErrors = {};
-    if (!form.name.trim()) nextErrors.name = "Doctor name is required";
-    if (
-      form.phone.trim() &&
-      !/^\d{7,15}$/.test(form.phone.trim())
-    )
-      nextErrors.phone = "Enter a valid phone number (7–15 digits)";
+    const nextErrors = runValidations({
+      name:             () => validateRequiredName(form.name, "Doctor name"),
+      phone:            () => validatePhone(form.phone, true),  // @NotBlank
+      specializationId: () =>
+        form.specializationId ? "" : "Specialization is required",
+    });
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -72,9 +89,9 @@ export default function DoctorFormModal({
     try {
       const payload = {
         name: form.name.trim(),
-        phone: form.phone.trim() || null,
-        specializationId: form.specializationId || null,
-        active: form.active,
+        phone: form.phone.trim(),                    // @NotBlank
+        specializationId: Number(form.specializationId), // @NotNull Long
+        status: form.status,
       };
       let saved;
       if (isEdit) {
@@ -149,11 +166,10 @@ export default function DoctorFormModal({
             <FormError message={errors.name} />
           </div>
 
-          {/* Specialization */}
+          {/* Specialization — required */}
           <div>
             <label htmlFor="doc-spec" className="block text-xs font-semibold text-gray-500 mb-1">
-              Specialization{" "}
-              <span className="text-gray-400 font-normal">(optional)</span>
+              Specialization <span className="text-rose-500">*</span>
             </label>
             <select
               id="doc-spec"
@@ -161,58 +177,71 @@ export default function DoctorFormModal({
               onChange={(e) => handleChange("specializationId", e.target.value)}
               className={`${inputCls("specializationId")} bg-white`}
             >
-              <option value="">None</option>
+              <option value="" disabled>Select specialization</option>
               {specializations.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>
               ))}
             </select>
+            <FormError message={errors.specializationId} />
           </div>
 
-          {/* Phone */}
+          {/* Phone — required, max 10 digits */}
           <div>
             <label htmlFor="doc-phone" className="block text-xs font-semibold text-gray-500 mb-1">
-              Phone{" "}
-              <span className="text-gray-400 font-normal">(optional)</span>
+              Phone <span className="text-rose-500">*</span>
             </label>
             <input
               id="doc-phone"
               type="tel"
+              inputMode="numeric"
               value={form.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
+              onChange={(e) => handlePhoneChange(e.target.value)}
               className={inputCls("phone")}
-              placeholder="Phone number"
+              placeholder="10-digit phone number"
               autoComplete="off"
+              maxLength={10}
             />
             <FormError message={errors.phone} />
           </div>
 
-          {/* Active toggle */}
-          <div className="flex items-center gap-3">
-            <button
-              id="doc-active-toggle"
-              type="button"
-              role="switch"
-              aria-checked={form.active}
-              onClick={() => handleChange("active", !form.active)}
-              className={`relative rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ${form.active ? "bg-blue-600" : "bg-gray-300"
+          {/* Status toggle — only shown when editing; new doctors default to ACTIVE */}
+          {isEdit && (
+            <div className="flex items-center gap-3">
+              <button
+                id="doc-active-toggle"
+                type="button"
+                role="switch"
+                aria-checked={form.status === "ACTIVE"}
+                onClick={() =>
+                  handleChange(
+                    "status",
+                    form.status === "ACTIVE" ? "INACTIVE" : "ACTIVE",
+                  )
+                }
+                className={`relative rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                  form.status === "ACTIVE" ? "bg-blue-600" : "bg-gray-300"
                 }`}
-              style={{ width: "36px", height: "20px" }}
-            >
-              <span
-                className="absolute top-0.5 left-0.5 bg-white rounded-full shadow transition-transform"
-                style={{
-                  width: "16px",
-                  height: "16px",
-                  transform: form.active ? "translateX(16px)" : "translateX(0)",
-                }}
-              />
-            </button>
-            <span className="text-sm text-gray-700 font-medium">
-              {form.active ? "Active" : "Inactive"}
-            </span>
-          </div>
+                style={{ width: "36px", height: "20px" }}
+              >
+                <span
+                  className="absolute top-0.5 left-0.5 bg-white rounded-full shadow transition-transform"
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    transform:
+                      form.status === "ACTIVE"
+                        ? "translateX(16px)"
+                        : "translateX(0)",
+                  }}
+                />
+              </button>
+              <span className="text-sm text-gray-700 font-medium">
+                {form.status === "ACTIVE" ? "Active" : "Inactive"}
+              </span>
+            </div>
+          )}
 
           {/* Footer */}
           <div className="pt-2 flex items-center justify-end gap-2">

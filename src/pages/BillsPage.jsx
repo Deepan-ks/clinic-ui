@@ -6,12 +6,21 @@ import BillsTable from "../components/bills/BillsTable";
 import { useToast } from "../hooks/useToast";
 
 const BASE_URL = "http://localhost:8080/api/v1";
+const PAGE_SIZE = 10;
 
 function normalizeBillsResponse(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.content)) return payload.content;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
+  // If it's a Spring Page object
+  if (payload?.content && Array.isArray(payload.content)) {
+    return {
+      bills: payload.content,
+      totalPages: payload.totalPages ?? 1,
+    };
+  }
+  // Fallback for raw arrays
+  if (Array.isArray(payload)) return { bills: payload, totalPages: 1 };
+  if (Array.isArray(payload?.data)) return { bills: payload.data, totalPages: 1 };
+
+  return { bills: [], totalPages: 0 };
 }
 
 export default function BillsPage() {
@@ -23,33 +32,36 @@ export default function BillsPage() {
   const [search, setSearch] = useState("");          // debounced
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [page, setPage] = useState(0);
 
+  // ── Data state ──────────────────────────────────────────────────
   const [bills, setBills] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [downloadingId, setDownloadingId] = useState(null);
 
   // ── 300ms debounce on search input ───────────────────────────────
   useEffect(() => {
-    const timer = setTimeout(() => setSearch(searchInput.trim()), 300);
+    const timer = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(0); // Reset to first page on new search
+    }, 300);
     return () => clearTimeout(timer);
   }, [searchInput]);
 
   // ── Build query string ────────────────────────────────────────────
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
-    if (search)   params.set("search",   search);
+    if (search) params.set("search", search);
     if (fromDate) params.set("fromDate", fromDate);
-    if (toDate)   params.set("toDate",   toDate);
-    params.set("page", "0");
-    params.set("size", "50");
+    if (toDate) params.set("toDate", toDate);
+    params.set("page", String(page));
+    params.set("size", String(PAGE_SIZE));
     return params.toString();
-  }, [search, fromDate, toDate]);
+  }, [search, fromDate, toDate, page]);
 
   // ── Fetch bills ───────────────────────────────────────────────────
   useEffect(() => {
-    // Don't fetch until the date range has been initialised by DateFilter
-    if (!fromDate && !toDate) return;
-
     let cancelled = false;
 
     const loadBills = async () => {
@@ -57,7 +69,10 @@ export default function BillsPage() {
       try {
         const response = await api.get(`/bills?${queryString}`);
         if (cancelled) return;
-        setBills(normalizeBillsResponse(response));
+
+        const { bills: list, totalPages: tp } = normalizeBillsResponse(response);
+        setBills(list);
+        setTotalPages(tp);
       } catch {
         if (cancelled) return;
         setBills([]);
@@ -72,12 +87,13 @@ export default function BillsPage() {
 
     loadBills();
     return () => { cancelled = true; };
-  }, [queryString, fromDate, toDate, addToast]);
+  }, [queryString, addToast]);
 
   // ── Handler from DateFilter ───────────────────────────────────────
   const handleRangeChange = (from, to) => {
     setFromDate(from);
     setToDate(to);
+    setPage(0); // Reset to first page on date change
   };
 
   // ── View + Download ───────────────────────────────────────────────
@@ -112,6 +128,9 @@ export default function BillsPage() {
     }
   };
 
+  const hasPrev = page > 0;
+  const hasNext = page < totalPages - 1;
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 w-full">
@@ -136,6 +155,33 @@ export default function BillsPage() {
           onView={handleView}
           onDownload={handleDownload}
         />
+
+        {/* Pagination UI */}
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
+            <span className="text-xs font-medium text-gray-500">
+              Page {page + 1} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setPage((p) => p - 1)}
+                disabled={!hasPrev}
+                className="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                ← Prev
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={!hasNext}
+                className="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

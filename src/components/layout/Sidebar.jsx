@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <div className="w-56 bg-white border-r border-gray-200 p-4 flex flex-col justify-between shrink-0">
       <div>
-        <div className="mb-6 px-1">
+        <div className="mb-6 px-2.5">
           <h1 className="text-base font-bold text-gray-900">Clinic Assist</h1>
           <p className="text-[11px] text-gray-400 mt-0.5">Practice Management</p>
         </div>
@@ -28,21 +28,23 @@ export default function Sidebar() {
         <nav className="space-y-0.5">
           {NAV.map(({ to, label, icon }) => (
             <NavLink key={to} to={to} className={navCls}>
-              <svg
-                className="w-4 h-4 shrink-0"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={icon} />
-              </svg>
-              {label}
+              <div className="w-5 flex justify-center shrink-0">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={icon} />
+                </svg>
+              </div>
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
       </div>
 
-      <div className="text-xs text-gray-400 px-1">Support</div>
+      <div className="text-xs text-gray-400 px-2.5">Support</div>
     </div>
   );
 }

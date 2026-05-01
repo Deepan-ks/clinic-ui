@@ -104,12 +104,6 @@ export default function DateFilter({ onRangeChange, disabled = false }) {
           />
         </div>
       )}
-
-      {preset !== "custom" && (
-        <p className="text-xs text-gray-400">
-          Showing: <span className="font-medium text-gray-600">{activeLabel}</span>
-        </p>
-      )}
     </div>
   );
 }

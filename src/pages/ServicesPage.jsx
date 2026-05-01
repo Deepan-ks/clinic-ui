@@ -1,16 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../api/api";
+import { normalizeServices, normalizeSpecializations, normalizeService } from "../api/normalizers";
 import ServicesFilterBar from "../components/services/ServicesFilterBar";
 import ServicesTable from "../components/services/ServicesTable";
 import ServiceFormModal from "../components/services/ServiceFormModal";
 import { useToast } from "../hooks/useToast";
-
-function normalizeList(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.content)) return payload.content;
-  if (Array.isArray(payload?.data)) return payload.data;
-  return [];
-}
 
 export default function ServicesPage() {
   const { addToast } = useToast();
@@ -39,14 +33,14 @@ export default function ServicesPage() {
   useEffect(() => {
     api
       .get("/specializations")
-      .then((res) => setSpecializations(normalizeList(res)))
-      .catch(() => {});
+      .then((res) => setSpecializations(normalizeSpecializations(res)))
+      .catch(() => {}); // Dropdown stays empty on failure — non-critical
   }, []);
 
   // ── Build query ───────────────────────────────────────────────────
   const queryString = useMemo(() => {
     const p = new URLSearchParams();
-    if (search) p.set("search", search);
+    if (search)           p.set("search", search);
     if (specializationId) p.set("specializationId", specializationId);
     p.set("page", "0");
     p.set("size", "50");
@@ -59,7 +53,7 @@ export default function ServicesPage() {
     setLoading(true);
     api
       .get(`/services?${queryString}`)
-      .then((res) => { if (!cancelled) setServices(normalizeList(res)); })
+      .then((res) => { if (!cancelled) setServices(normalizeServices(res)); })
       .catch(() => {
         if (!cancelled) {
           setServices([]);
@@ -76,16 +70,16 @@ export default function ServicesPage() {
   const handleClose = () => { setModalOpen(false); setEditingService(null); };
 
   const handleSaved = (saved, isEdit) => {
+    const norm = normalizeService(saved);
     if (isEdit) {
-      setServices((prev) => prev.map((s) => (s.id === saved.id ? saved : s)));
+      setServices((prev) => prev.map((s) => (s.id === norm.id ? norm : s)));
     } else {
-      setServices((prev) => [saved, ...prev]);
+      setServices((prev) => [norm, ...prev]);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
-      {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4">
         <h1 className="text-xl font-bold text-gray-900">Services</h1>
         <p className="text-xs text-gray-400 mt-0.5">Manage billable services and pricing</p>
@@ -106,6 +100,7 @@ export default function ServicesPage() {
           services={services}
           loading={loading}
           onEdit={handleEdit}
+          specializations={specializations}
         />
       </div>
 
