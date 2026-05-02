@@ -32,11 +32,11 @@ export default function DoctorsTable({ doctors, loading, onEdit }) {
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
       <table className="w-full border-collapse table-fixed">
         <colgroup>
-          <col style={{ width: "30%" }} /> {/* Name */}
-          <col style={{ width: "24%" }} /> {/* Specialization */}
-          <col style={{ width: "18%" }} /> {/* Phone */}
-          <col style={{ width: "12%" }} /> {/* Status */}
-          <col style={{ width: "8%" }} /> {/* Actions */}
+          <col style={{ width: "30%" }} />
+          <col style={{ width: "24%" }} />
+          <col style={{ width: "18%" }} />
+          <col style={{ width: "12%" }} />
+          <col style={{ width: "8%" }} />
         </colgroup>
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>

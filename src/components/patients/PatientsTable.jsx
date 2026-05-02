@@ -91,13 +91,13 @@ export default function PatientsTable({
       <table className="w-full border-collapse table-fixed">
         {/* Explicit column widths so the browser doesn't guess */}
         <colgroup>
-          <col style={{ width: "26%" }} /> {/* Patient Name */}
-          <col style={{ width: "14%" }} /> {/* Phone */}
-          <col style={{ width: "7%" }} /> {/* Age */}
-          <col style={{ width: "9%" }} /> {/* Gender */}
-          <col style={{ width: "14%" }} /> {/* Registered On */}
-          <col style={{ width: "14%" }} /> {/* Last Updated */}
-          <col style={{ width: "7%" }} /> {/* Actions */}
+          <col style={{ width: "26%" }} />
+          <col style={{ width: "14%" }} />
+          <col style={{ width: "7%" }} />
+          <col style={{ width: "9%" }} />
+          <col style={{ width: "14%" }} />
+          <col style={{ width: "14%" }} />
+          <col style={{ width: "7%" }} />
         </colgroup>
 
         <thead className="bg-gray-50 border-b border-gray-200">

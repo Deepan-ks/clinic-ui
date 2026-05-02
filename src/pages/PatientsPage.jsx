@@ -4,6 +4,7 @@ import PatientsFilterBar from "../components/patients/PatientsFilterBar";
 import PatientsTable from "../components/patients/PatientsTable";
 import PatientFormModal from "../components/patients/PatientFormModal";
 import { useToast } from "../hooks/useToast";
+import { Heading, Text } from "../components/ui/Typography";
 
 function normalizeResponse(payload) {
   if (Array.isArray(payload)) return { patients: payload, totalPages: 1 };

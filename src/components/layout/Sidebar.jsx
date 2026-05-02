@@ -19,8 +19,8 @@ export default function Sidebar() {
     }`;
 
   return (
-    <div className="w-56 bg-white border-r border-gray-200 p-4 flex flex-col justify-between shrink-0">
-      <div>
+    <div className="w-56 h-screen sticky top-0 bg-white border-r border-gray-200 p-4 flex flex-col justify-between shrink-0">
+      <div className="flex-1 overflow-y-auto">
         <div className="mb-6 px-2.5">
           <Heading level={6} className="text-gray-900">Clinic Assist</Heading>
           <Text variant="xs" className="mt-0.5 lowercase tracking-normal">Practice Management</Text>

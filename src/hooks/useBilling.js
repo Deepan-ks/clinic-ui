@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { api } from "../api/api";
 import { useCart } from "./useCart";
 import { useToast } from "./useToast";
+import { API_BASE_URL } from "../config/env";
 
 export function useBilling() {
   const { addToast } = useToast();
@@ -99,7 +100,7 @@ export function useBilling() {
       const billNumber = res.billNumber ?? res.invoiceNumber ?? billId;
       if (billId) {
         const pdfResponse = await fetch(
-          `http://localhost:8080/api/v1/bills/${billId}/invoice`
+          `${API_BASE_URL}/bills/${billId}/invoice`
         );
 
         if (pdfResponse.ok) {

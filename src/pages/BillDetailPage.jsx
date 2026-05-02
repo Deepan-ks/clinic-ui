@@ -7,8 +7,9 @@ import BillTotals from "../components/bills/BillTotals";
 import LoadingButton from "../components/common/LoadingButton";
 import { useToast } from "../hooks/useToast";
 import { Heading, Text } from "../components/ui/Typography";
+import { API_BASE_URL } from "../config/env";
 
-const BASE_URL = "http://localhost:8080/api/v1";
+const BASE_URL = API_BASE_URL;
 
 const toNum = (value) => {
   const num = Number(value ?? 0);

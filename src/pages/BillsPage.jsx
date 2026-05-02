@@ -5,8 +5,9 @@ import BillsFilterBar from "../components/bills/BillsFilterBar";
 import BillsTable from "../components/bills/BillsTable";
 import { useToast } from "../hooks/useToast";
 import { Heading, Text } from "../components/ui/Typography";
+import { API_BASE_URL } from "../config/env";
 
-const BASE_URL = "http://localhost:8080/api/v1";
+const BASE_URL = API_BASE_URL;
 const PAGE_SIZE = 10;
 
 function normalizeBillsResponse(payload) {
