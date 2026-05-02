@@ -7,6 +7,7 @@ import { DoctorSelect } from "../components/billing/DoctorSelect";
 import { ServiceCart } from "../components/billing/ServiceCart";
 import { BillSummary } from "../components/billing/BillSummary";
 import ServiceSearch from "../components/billing/ServiceSearch";
+import { Heading, Text } from "../components/ui/Typography";
 
 export default function BillingPage() {
   const billing = useBilling();
