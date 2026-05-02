@@ -1,5 +1,6 @@
 import PatientRow from "./PatientRow";
 import TableSkeleton from "../common/TableSkeleton";
+import { Text } from "../ui/Typography";
 
 /** Small sort-indicator arrow */
 function SortIcon({ active, dir }) {
@@ -33,14 +34,14 @@ function SortTh({ label, field, sort, sortDir, onSort }) {
   const active = sort === field;
   return (
     <th
-      className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide select-none"
+      className="px-4 py-3 text-left select-none"
     >
       <button
         type="button"
         onClick={() => onSort(field)}
         className="inline-flex items-center gap-0.5 hover:text-gray-800 transition-colors"
       >
-        {label}
+        <Text variant="xs" as="span" className="inherit">{label}</Text>
         <SortIcon active={active} dir={sortDir} />
       </button>
     </th>
@@ -77,10 +78,10 @@ export default function PatientsTable({
             />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-gray-700">No patients found</p>
-        <p className="text-xs text-gray-400 mt-1">
+        <Text variant="label-md" className="text-gray-700">No patients found</Text>
+        <Text variant="helper" className="mt-1">
           Try a different search, or add a new patient.
-        </p>
+        </Text>
       </div>
     );
   }
@@ -110,14 +111,14 @@ export default function PatientsTable({
               onSort={onSort}
             />
 
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Phone
+            <th className="px-4 py-3 text-left">
+              <Text variant="xs">Phone</Text>
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Age
+            <th className="px-4 py-3 text-left">
+              <Text variant="xs">Age</Text>
             </th>
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Gender
+            <th className="px-4 py-3 text-left">
+              <Text variant="xs">Gender</Text>
             </th>
 
             {/* Sortable: Registered On */}
@@ -129,12 +130,12 @@ export default function PatientsTable({
               onSort={onSort}
             />
 
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Last Updated
+            <th className="px-4 py-3 text-left">
+              <Text variant="xs">Last Updated</Text>
             </th>
 
-            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Actions
+            <th className="px-4 py-3 text-left">
+              <Text variant="xs">Actions</Text>
             </th>
           </tr>
         </thead>

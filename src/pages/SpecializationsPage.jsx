@@ -4,6 +4,7 @@ import { normalizeSpecializations } from "../api/normalizers";
 import SpecializationList from "../components/specializations/SpecializationList";
 import SpecializationFormModal from "../components/specializations/SpecializationFormModal";
 import { useToast } from "../hooks/useToast";
+import { Heading, Text } from "../components/ui/Typography";
 
 export default function SpecializationsPage() {
   const { addToast } = useToast();
@@ -32,8 +33,8 @@ export default function SpecializationsPage() {
 
   const existingNames = specializations.map((s) => s.name);
 
-  const handleAdd   = () => { setEditing(null); setModalOpen(true); };
-  const handleEdit  = (spec) => { setEditing(spec); setModalOpen(true); };
+  const handleAdd = () => { setEditing(null); setModalOpen(true); };
+  const handleEdit = (spec) => { setEditing(spec); setModalOpen(true); };
   const handleClose = () => { setModalOpen(false); setEditing(null); };
 
   const handleSaved = (saved, isEdit) => {
@@ -50,8 +51,8 @@ export default function SpecializationsPage() {
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Specializations</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Manage departments and specialization categories</p>
+          <Heading level={1}>Specializations</Heading>
+          <Text variant="helper" className="mt-0.5">Manage departments and specialization categories</Text>
         </div>
         <button
           type="button"

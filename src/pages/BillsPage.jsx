@@ -4,6 +4,7 @@ import { api } from "../api/api";
 import BillsFilterBar from "../components/bills/BillsFilterBar";
 import BillsTable from "../components/bills/BillsTable";
 import { useToast } from "../hooks/useToast";
+import { Heading, Text } from "../components/ui/Typography";
 
 const BASE_URL = "http://localhost:8080/api/v1";
 const PAGE_SIZE = 10;
@@ -134,10 +135,10 @@ export default function BillsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 w-full">
-        <h1 className="text-xl font-bold text-gray-900">Bill History</h1>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <Heading level={1}>Bill History</Heading>
+        <Text variant="helper" className="mt-0.5">
           Search and access previously created bills
-        </p>
+        </Text>
       </div>
 
       <div className="p-6 space-y-4">
@@ -159,9 +160,9 @@ export default function BillsPage() {
         {/* Pagination UI */}
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
-            <span className="text-xs font-medium text-gray-500">
+            <Text variant="label-sm">
               Page {page + 1} of {totalPages}
-            </span>
+            </Text>
             <div className="flex gap-2">
               <button
                 type="button"

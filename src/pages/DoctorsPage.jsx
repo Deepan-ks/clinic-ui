@@ -4,6 +4,7 @@ import { normalizeDoctors, normalizeSpecializations, normalizeDoctor } from "../
 import DoctorsTable from "../components/doctors/DoctorsTable";
 import DoctorFormModal from "../components/doctors/DoctorFormModal";
 import { useToast } from "../hooks/useToast";
+import { Heading, Text } from "../components/ui/Typography";
 
 export default function DoctorsPage() {
   const { addToast } = useToast();
@@ -45,8 +46,8 @@ export default function DoctorsPage() {
   }, [addToast]);
 
   // ── Modal handlers ────────────────────────────────────────────────
-  const handleAdd   = () => { setEditingDoctor(null); setModalOpen(true); };
-  const handleEdit  = (doc) => { setEditingDoctor(doc); setModalOpen(true); };
+  const handleAdd = () => { setEditingDoctor(null); setModalOpen(true); };
+  const handleEdit = (doc) => { setEditingDoctor(doc); setModalOpen(true); };
   const handleClose = () => { setModalOpen(false); setEditingDoctor(null); };
 
   const handleSaved = (saved, isEdit) => {
@@ -63,8 +64,8 @@ export default function DoctorsPage() {
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Doctors</h1>
-          <p className="text-xs text-gray-400 mt-0.5">Manage doctors and their specializations</p>
+          <Heading level={1}>Doctors</Heading>
+          <Text variant="helper" className="mt-0.5">Manage doctors and their specializations</Text>
         </div>
         <button
           id="add-doctor-btn"

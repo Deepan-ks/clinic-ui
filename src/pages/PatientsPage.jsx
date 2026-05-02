@@ -142,10 +142,10 @@ export default function PatientsPage() {
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
       {/* Page header */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 w-full">
-        <h1 className="text-xl font-bold text-gray-900">Patients</h1>
-        <p className="text-xs text-gray-400 mt-0.5">
+        <Heading level={1}>Patients</Heading>
+        <Text variant="helper" className="mt-0.5">
           Search, add, and manage patient records
-        </p>
+        </Text>
       </div>
 
       <div className="p-6 space-y-4">
@@ -170,9 +170,9 @@ export default function PatientsPage() {
         {/* Pagination */}
         {!loading && totalPages > 1 && (
           <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 py-3">
-            <span className="text-xs text-gray-500">
+            <Text variant="label-sm">
               Page {page + 1} of {totalPages}
-            </span>
+            </Text>
             <div className="flex gap-2">
               <button
                 id="patients-prev-btn"

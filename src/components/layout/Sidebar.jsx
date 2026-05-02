@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Heading, Text } from "../ui/Typography";
 
 const NAV = [
   { to: "/billing",         label: "New Bill",         icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
@@ -21,8 +22,8 @@ export default function Sidebar() {
     <div className="w-56 bg-white border-r border-gray-200 p-4 flex flex-col justify-between shrink-0">
       <div>
         <div className="mb-6 px-2.5">
-          <h1 className="text-base font-bold text-gray-900">Clinic Assist</h1>
-          <p className="text-[11px] text-gray-400 mt-0.5">Practice Management</p>
+          <Heading level={6} className="text-gray-900">Clinic Assist</Heading>
+          <Text variant="xs" className="mt-0.5 lowercase tracking-normal">Practice Management</Text>
         </div>
 
         <nav className="space-y-0.5">
@@ -44,7 +45,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <div className="text-xs text-gray-400 px-2.5">Support</div>
+      <Text variant="xs" className="px-2.5">Support</Text>
     </div>
   );
 }

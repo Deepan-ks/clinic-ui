@@ -6,6 +6,7 @@ import BillItemsTable from "../components/bills/BillItemsTable";
 import BillTotals from "../components/bills/BillTotals";
 import LoadingButton from "../components/common/LoadingButton";
 import { useToast } from "../hooks/useToast";
+import { Heading, Text } from "../components/ui/Typography";
 
 const BASE_URL = "http://localhost:8080/api/v1";
 
@@ -132,8 +133,8 @@ export default function BillDetailPage() {
       <div className="max-w-6xl mx-auto space-y-4">
         <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Bill Detail</h1>
-            <p className="text-xs text-gray-500 mt-1">Review full bill information without downloading PDF</p>
+            <Heading level={1}>Bill Detail</Heading>
+            <Text variant="helper" className="mt-1">Review full bill information without downloading PDF</Text>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -156,7 +157,7 @@ export default function BillDetailPage() {
 
         {error ? (
           <div className="bg-white border border-rose-200 rounded-xl p-6">
-            <p className="text-sm font-semibold text-rose-700">{error}</p>
+            <Text variant="label-md" className="text-rose-700">{error}</Text>
           </div>
         ) : (
           <>

@@ -1,4 +1,5 @@
 import { Avatar } from "../ui/Avatar";
+import { Text } from "../ui/Typography";
 
 const GENDER_BADGE = {
   MALE: "bg-blue-50 text-blue-700",
@@ -62,15 +63,19 @@ export default function PatientRow({ patient, onEdit }) {
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
           <Avatar name={name} size="sm" />
-          <span className="text-sm font-medium text-gray-900">{name}</span>
+          <Text variant="label-md" as="span" className="text-gray-900">{name}</Text>
         </div>
       </td>
 
       {/* Phone */}
-      <td className="px-4 py-3 text-sm text-gray-600 tabular-nums">{phone}</td>
+      <td className="px-4 py-3">
+        <Text variant="number-sm">{phone}</Text>
+      </td>
 
       {/* Age */}
-      <td className="px-4 py-3 text-sm text-gray-600">{age}</td>
+      <td className="px-4 py-3">
+        <Text variant="sm">{age}</Text>
+      </td>
 
       {/* Gender */}
       <td className="px-4 py-3">
@@ -81,18 +86,18 @@ export default function PatientRow({ patient, onEdit }) {
             {gender.charAt(0) + gender.slice(1).toLowerCase()}
           </span>
         ) : (
-          <span className="text-sm text-gray-400">—</span>
+          <Text variant="sm" className="text-gray-400">—</Text>
         )}
       </td>
 
       {/* Registered date */}
-      <td className="px-4 py-3 text-sm text-gray-500 tabular-nums whitespace-nowrap">
-        {registered}
+      <td className="px-4 py-3 whitespace-nowrap">
+        <Text variant="number-sm" className="text-gray-500">{registered}</Text>
       </td>
 
       {/* Last updated date */}
-      <td className="px-4 py-3 text-sm text-gray-500 tabular-nums whitespace-nowrap">
-        {lastUpdated}
+      <td className="px-4 py-3 whitespace-nowrap">
+        <Text variant="number-sm" className="text-gray-500">{lastUpdated}</Text>
       </td>
 
       {/* Actions — icon always visible, highlights on row hover */}

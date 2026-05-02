@@ -2,20 +2,22 @@
 
 import LoadingButton from "../common/LoadingButton";
 import { fmt, PAYMENT_MODES } from "../../utils/formatters";
+import { Heading, Text } from "../ui/Typography";
 
 function SummaryRow({ label, value, placeholder, done }) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <span className="text-xs text-gray-400 font-medium flex-shrink-0">
+      <Text variant="label-sm" className="flex-shrink-0">
         {label}
-      </span>
-      <span
-        className={`text-xs font-semibold text-right leading-snug ${
+      </Text>
+      <Text
+        variant="label-sm"
+        className={`text-right leading-snug ${
           done ? "text-gray-800" : "text-gray-300"
         }`}
       >
         {value || placeholder}
-      </span>
+      </Text>
     </div>
   );
 }
@@ -44,9 +46,9 @@ export function BillSummary({
   return (
     <div className="w-full xl:w-[420px] xl:flex-shrink-0 bg-white border border-gray-200 rounded-xl h-fit xl:sticky xl:top-6 shadow-sm">
       <div className="p-6 space-y-5 flex flex-col min-h-full">
-        <h2 className="text-lg font-semibold text-gray-900 tracking-tight">
+        <Heading level={3}>
           Bill Summary
-        </h2>
+        </Heading>
 
         {/* Status Rows */}
         <div className="space-y-3">
@@ -84,12 +86,12 @@ export function BillSummary({
                 key={item.id}
                 className="flex justify-between items-baseline"
               >
-                <span className="text-xs text-gray-500 truncate max-w-[160px]">
+                <Text variant="sm" className="text-gray-500 truncate max-w-[160px]">
                   {item.name} <span className="text-gray-400">×{item.qty}</span>
-                </span>
-                <span className="text-xs font-semibold text-gray-700 flex-shrink-0">
+                </Text>
+                <Text variant="number-sm" className="flex-shrink-0">
                   {fmt(item.price * item.qty)}
-                </span>
+                </Text>
               </div>
             ))}
           </div>
@@ -97,15 +99,15 @@ export function BillSummary({
 
         {/* Subtotal */}
         <div className="flex justify-between text-sm">
-          <span className="text-gray-500">Subtotal</span>
-          <span className="font-semibold text-gray-800">{fmt(subtotal)}</span>
+          <Text variant="sm" className="text-gray-500">Subtotal</Text>
+          <Text variant="number-sm" className="font-semibold text-gray-800">{fmt(subtotal)}</Text>
         </div>
 
         {/* Discount */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+          <Text variant="xs" className="mb-2">
             Discount (optional)
-          </p>
+          </Text>
           <div className="grid grid-cols-2 gap-2">
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-medium pointer-events-none">
@@ -144,18 +146,18 @@ export function BillSummary({
             </div>
           </div>
           {discountVal > 0 && (
-            <div className="flex justify-between text-xs text-emerald-600 font-semibold mt-1.5">
-              <span>Discount</span>
-              <span>−{fmt(discountVal)}</span>
+            <div className="flex justify-between mt-1.5">
+              <Text variant="label-sm" className="text-emerald-600">Discount</Text>
+              <Text variant="number-sm" className="text-emerald-600">−{fmt(discountVal)}</Text>
             </div>
           )}
         </div>
 
         {/* Payment Mode */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+          <Text variant="xs" className="mb-2">
             Payment Mode
-          </p>
+          </Text>
           <div className="grid grid-cols-2 gap-2">
             {PAYMENT_MODES.map((mode) => (
               <button
@@ -177,10 +179,10 @@ export function BillSummary({
 
         {/* Grand Total */}
         <div className="flex items-baseline justify-between">
-          <span className="text-sm font-bold text-gray-600">Grand Total</span>
-          <span className="text-2xl font-semibold text-gray-900 tracking-tight">
+          <Text variant="label-md" className="text-gray-600">Grand Total</Text>
+          <Text variant="number-lg">
             {fmt(total)}
-          </span>
+          </Text>
         </div>
 
         {/* Submit Button */}

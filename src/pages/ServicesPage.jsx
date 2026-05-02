@@ -5,6 +5,7 @@ import ServicesFilterBar from "../components/services/ServicesFilterBar";
 import ServicesTable from "../components/services/ServicesTable";
 import ServiceFormModal from "../components/services/ServiceFormModal";
 import { useToast } from "../hooks/useToast";
+import { Heading, Text } from "../components/ui/Typography";
 
 export default function ServicesPage() {
   const { addToast } = useToast();
@@ -34,13 +35,13 @@ export default function ServicesPage() {
     api
       .get("/specializations")
       .then((res) => setSpecializations(normalizeSpecializations(res)))
-      .catch(() => {}); // Dropdown stays empty on failure — non-critical
+      .catch(() => { }); // Dropdown stays empty on failure — non-critical
   }, []);
 
   // ── Build query ───────────────────────────────────────────────────
   const queryString = useMemo(() => {
     const p = new URLSearchParams();
-    if (search)           p.set("search", search);
+    if (search) p.set("search", search);
     if (specializationId) p.set("specializationId", specializationId);
     p.set("page", "0");
     p.set("size", "50");
@@ -65,8 +66,8 @@ export default function ServicesPage() {
   }, [queryString, addToast]);
 
   // ── Handlers ──────────────────────────────────────────────────────
-  const handleAdd   = () => { setEditingService(null); setModalOpen(true); };
-  const handleEdit  = (svc) => { setEditingService(svc); setModalOpen(true); };
+  const handleAdd = () => { setEditingService(null); setModalOpen(true); };
+  const handleEdit = (svc) => { setEditingService(svc); setModalOpen(true); };
   const handleClose = () => { setModalOpen(false); setEditingService(null); };
 
   const handleSaved = (saved, isEdit) => {
@@ -81,8 +82,8 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 w-full">
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-xl font-bold text-gray-900">Services</h1>
-        <p className="text-xs text-gray-400 mt-0.5">Manage billable services and pricing</p>
+        <Heading level={1}>Services</Heading>
+        <Text variant="helper" className="mt-0.5">Manage billable services and pricing</Text>
       </div>
 
       <div className="p-6 space-y-4">

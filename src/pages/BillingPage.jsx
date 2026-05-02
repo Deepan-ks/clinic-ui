@@ -16,10 +16,10 @@ export default function BillingPage() {
       {/* Top Bar */}
       <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between w-full">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">New Bill</h1>
-          <p className="text-xs text-gray-400 mt-0.5">
+          <Heading level={1}>New Bill</Heading>
+          <Text variant="helper" className="mt-0.5">
             Complete all steps to generate invoice
-          </p>
+          </Text>
         </div>
         <StepIndicator current={billing.step} />
       </div>
