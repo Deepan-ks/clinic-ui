@@ -3,8 +3,11 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { api } from "../api/api";
 import { useCart } from "./useCart";
+import { useToast } from "./useToast";
+import { API_BASE_URL } from "../config/env";
 
 export function useBilling() {
+  const { addToast } = useToast();
   const [patient, setPatient] = useState(null);
   const [selectedSpec, setSelectedSpec] = useState(null);
   const [doctor, setDoctor] = useState(null);
@@ -18,9 +21,8 @@ export function useBilling() {
   const [paymentMode, setPaymentMode] = useState("CASH");
   
   const [submitting, setSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState(null);
 
-  const { cart, setCart, addToCart, setQty, clearCart, subtotal, totalItems } = useCart();
+  const { cart, addToCart, setQty, clearCart, subtotal, totalItems } = useCart();
 
   // Load specializations on mount
   useEffect(() => {
@@ -80,48 +82,67 @@ export function useBilling() {
     setSubmitting(true);
     try {
       const res = await api.post("/bills", {
-        patientId: patient.patientId,
+        patientId: patient.id ?? patient.patientId,      // normalised or raw
         doctorId: doctor,
         doctorName: doctorName,
         specializationId: selectedSpec,
         paymentMode,
         discountAmount: Number(discountAmt || 0),
         discountPercent: Number(discountPct || 0),
-        items: cart.map((item) => ({ serviceId: item.id, quantity: item.qty })),
+        items: cart.map((item) => ({
+          serviceId: item.id ?? item.serviceId,           // normalised or raw
+          quantity: item.qty,
+        })),
       });
 
       // Download PDF
-      const billId = res.id;
-      const pdfResponse = await fetch(
-        `http://localhost:8080/api/v1/bills/${billId}/invoice`
-      );
-      const blob = await pdfResponse.blob();
-      const url = window.URL.createObjectURL(blob);
+      const billId = res.id ?? res.billId;
+      const billNumber = res.billNumber ?? res.invoiceNumber ?? billId;
+      if (billId) {
+        const pdfResponse = await fetch(
+          `${API_BASE_URL}/bills/${billId}/invoice`
+        );
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `invoice-${res.billNumber}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+        if (pdfResponse.ok) {
+          const blob = await pdfResponse.blob();
+          const url = globalThis.URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `invoice-${billNumber}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          globalThis.URL.revokeObjectURL(url);
+        } else {
+          addToast({
+            type: "error",
+            message: "Bill created, but invoice download failed.",
+          });
+        }
+      }
 
       // Reset form
-      setSuccessMsg(res?.billNumber || "Bill created successfully");
+      addToast({
+        type: "success",
+        message: `Invoice generated - ${res?.billNumber || "Bill created successfully"}`,
+      });
       clearCart();
       setSelectedSpec(null);
       setDiscountAmt("");
       setDiscountPct("");
       setPatient(null);
       setDoctor(null);
-      
-      setTimeout(() => setSuccessMsg(null), 5000);
-    } catch (e) {
-      console.error(e);
+
+    } catch {
+      addToast({
+        type: "error",
+        message: "Unable to create bill. Please retry.",
+      });
     } finally {
       setSubmitting(false);
     }
-  }, [canSubmit, submitting, patient, doctor, doctorName, selectedSpec, paymentMode, discountAmt, discountPct, cart, clearCart, setPatient, setDoctor]);
+  }, [canSubmit, submitting, patient, doctor, doctorName, selectedSpec, paymentMode, discountAmt, discountPct, cart, clearCart, addToast]);
 
   return {
     // State
@@ -145,7 +166,6 @@ export function useBilling() {
     paymentMode,
     setPaymentMode,
     submitting,
-    successMsg,
     // Computed
     step,
     subtotal,

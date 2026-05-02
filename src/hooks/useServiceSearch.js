@@ -7,7 +7,6 @@ export const useServiceSearch = (specializationId) => {
 
   useEffect(() => {
     if (!specializationId) {
-      setServices([]);
       return;
     }
 
@@ -25,15 +24,17 @@ export const useServiceSearch = (specializationId) => {
       .catch(console.error);
   }, [specializationId]);
 
+  const visibleServices = specializationId ? services : [];
+
   // 🔍 filter
   const filtered = query
-    ? services.filter((s) =>
+    ? visibleServices.filter((s) =>
         s.name.toLowerCase().includes(query.toLowerCase())
       )
     : [];
 
   // ⭐ frequent (simple for now: first 5)
-  const frequent = services.slice(0, 5);
+  const frequent = visibleServices.slice(0, 5);
 
   return {
     query,
