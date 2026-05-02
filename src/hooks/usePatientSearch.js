@@ -19,21 +19,26 @@ export function usePatientSearch() {
     }
 
     setSearching(true);
+    let active = true;
     const t = setTimeout(async () => {
       try {
         const res = await api.get(
           `/patients/search?query=${encodeURIComponent(query)}`
         );
+        if (!active) return;
         setResults(Array.isArray(res) ? res : []);
         setShowDrop(true);
       } catch {
-        setResults([]);
+        if (active) setResults([]);
       } finally {
-        setSearching(false);
+        if (active) setSearching(false);
       }
-    }, 300);
+    }, 500);
 
-    return () => clearTimeout(t);
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
   }, [query]);
 
   // Close dropdown on outside click

@@ -7,6 +7,7 @@ export default function ServiceSearch({
   specializationId,
   onSelect,
   cart = [],
+  isLoading = false,
 }) {
   const { query, setQuery, filtered, frequent } =
     useServiceSearch(specializationId);
@@ -30,6 +31,7 @@ export default function ServiceSearch({
             specializationId ? "Search services..." : "Select department first"
           }
           disabled={!specializationId}
+          loading={isLoading}
         />
 
         {/* Frequent */}

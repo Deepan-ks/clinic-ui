@@ -46,7 +46,7 @@ export default function PatientsPage() {
     const timer = setTimeout(() => {
       setSearch(searchInput.trim());
       setPage(0);
-    }, 350);
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchInput]);
 

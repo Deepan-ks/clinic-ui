@@ -47,7 +47,7 @@ export default function BillsPage() {
     const timer = setTimeout(() => {
       setSearch(searchInput.trim());
       setPage(0); // Reset to first page on new search
-    }, 300);
+    }, 500);
     return () => clearTimeout(timer);
   }, [searchInput]);
 

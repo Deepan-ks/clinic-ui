@@ -1,15 +1,20 @@
-import { SearchIcon } from "../icons";
+import { SearchIcon, SpinIcon } from "../icons";
 
 export default function SearchBar({
   value,
   onChange,
   placeholder,
   disabled = false,
+  loading = false,
 }) {
   return (
     <div className="relative">
       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-        <SearchIcon className="w-4 h-4" />
+        {loading ? (
+          <SpinIcon className="w-4 h-4 text-blue-500" />
+        ) : (
+          <SearchIcon className="w-4 h-4" />
+        )}
       </span>
 
       <input

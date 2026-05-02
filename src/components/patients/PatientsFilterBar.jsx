@@ -16,6 +16,7 @@ export default function PatientsFilterBar({
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Type patient name or phone…"
+          loading={disabled}
         />
       </div>
 

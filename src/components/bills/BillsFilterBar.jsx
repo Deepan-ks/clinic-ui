@@ -15,6 +15,7 @@ export default function BillsFilterBar({
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search patient or phone..."
+          loading={disabled}
         />
       </div>
 

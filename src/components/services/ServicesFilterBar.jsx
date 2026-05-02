@@ -21,6 +21,7 @@ export default function ServicesFilterBar({
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Service name…"
+            loading={disabled}
           />
         </div>
 

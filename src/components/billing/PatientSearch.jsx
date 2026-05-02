@@ -59,6 +59,7 @@ export function PatientSearch({ patient, onSelect }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search patient by name or phone..."
+            loading={searching}
           />
 
           {!patient && query.trim().length === 0 && (

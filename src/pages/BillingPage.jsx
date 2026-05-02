@@ -41,12 +41,14 @@ export default function BillingPage() {
               onDoctorChange={billing.setDoctor}
               specs={billing.specs}
               doctors={billing.doctors}
+              isLoading={billing.loadingData}
             />
 
             <ServiceSearch
               specializationId={billing.selectedSpec}
               onSelect={billing.addToCart}
               cart={billing.cart}
+              isLoading={billing.loadingData}
             />
 
             <ServiceCart cart={billing.cart} setQty={billing.setQty} />

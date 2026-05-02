@@ -26,7 +26,7 @@ export default function ServicesPage() {
 
   // ── Debounce search ───────────────────────────────────────────────
   useEffect(() => {
-    const t = setTimeout(() => { setSearch(searchInput.trim()); }, 300);
+    const t = setTimeout(() => { setSearch(searchInput.trim()); }, 500);
     return () => clearTimeout(t);
   }, [searchInput]);
 

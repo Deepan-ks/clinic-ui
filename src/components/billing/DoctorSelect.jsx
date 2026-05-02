@@ -1,3 +1,4 @@
+import { SpinIcon } from "../icons";
 import { StepStatus } from "../ui/StepStatus";
 
 // ── DOCTOR SELECT COMPONENT ─────────────────────────────────────
@@ -9,6 +10,7 @@ export function DoctorSelect({
   onDoctorChange,
   specs,
   doctors,
+  isLoading = false,
 }) {
   return (
     <div
@@ -26,8 +28,8 @@ export function DoctorSelect({
         <div className="grid grid-cols-2 gap-4">
           {/* Department */}
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Department
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+              Department {isLoading && !specs.length && <SpinIcon className="w-3 h-3 text-blue-500" />}
             </p>
             <div className="relative">
               <select
@@ -53,8 +55,8 @@ export function DoctorSelect({
 
           {/* Doctor */}
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Doctor
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+              Doctor {isLoading && selectedSpec && !doctors.length && <SpinIcon className="w-3 h-3 text-blue-500" />}
             </p>
             <div className="relative">
               <select

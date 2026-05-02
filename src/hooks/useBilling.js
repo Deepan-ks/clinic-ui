@@ -20,16 +20,24 @@ export function useBilling() {
   const [discountPct, setDiscountPct] = useState("");
   const [paymentMode, setPaymentMode] = useState("CASH");
   
+  const [loadingData, setLoadingData] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const { cart, addToCart, setQty, clearCart, subtotal, totalItems } = useCart();
 
   // Load specializations on mount
   useEffect(() => {
+    setLoadingData(true);
     api.get("/specializations")
       .then(setSpecs)
-      .catch(console.error);
-  }, []);
+      .catch(() => {
+        addToast({
+          type: "error",
+          message: "Unable to load departments. Please refresh.",
+        });
+      })
+      .finally(() => setLoadingData(false));
+  }, [addToast]);
 
   // Load doctors + services when specialization changes
   useEffect(() => {
@@ -38,6 +46,7 @@ export function useBilling() {
     setDoctor(null);
     clearCart();
     
+    setLoadingData(true);
     Promise.all([
       api.get(`/doctors?specializationId=${selectedSpec}`),
       api.get(`/services?specializationId=${selectedSpec}`),
@@ -46,8 +55,14 @@ export function useBilling() {
         setDoctors(doctorsData);
         setServicesList(servicesData);
       })
-      .catch(console.error);
-  }, [selectedSpec, clearCart]);
+      .catch(() => {
+        addToast({
+          type: "error",
+          message: "Unable to load doctors or services for this department.",
+        });
+      })
+      .finally(() => setLoadingData(false));
+  }, [selectedSpec, clearCart, addToast]);
 
   // Compute current step
   const step = useMemo(() => {
@@ -165,6 +180,7 @@ export function useBilling() {
     setDiscountPct,
     paymentMode,
     setPaymentMode,
+    loadingData,
     submitting,
     // Computed
     step,
