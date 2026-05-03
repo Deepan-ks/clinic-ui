@@ -1,0 +1,104 @@
+// ── SERVICE CART COMPONENT ─────────────────────────────────────
+
+import { XIcon, ReceiptIcon } from "@/shared/icons";
+import { fmt } from "@/lib/utils/formatters";
+import { StepStatus } from "@/shared/ui/StepStatus";
+
+export function ServiceCart({ cart, setQty }) {
+  const hasItems = cart.length > 0;
+
+  return (
+    <div
+      className={`bg-white rounded-xl border shadow-sm hover:shadow-md transition-all ${
+        hasItems ? "border-emerald-200" : "border-gray-200"
+      }`}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-2 px-4 py-3 border-b">
+        <StepStatus completed={cart.length > 0} />
+        <p className="font-semibold text-sm">Services</p>
+      </div>
+
+      <div className="px-6 py-5 space-y-3">
+        {/* Cart Table */}
+        <div className="rounded-xl border border-gray-200 overflow-hidden">
+          <div className="grid grid-cols-12 px-5 py-2.5 bg-gray-50 border-b border-gray-200 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+            <span className="col-span-5">Service</span>
+            <span className="col-span-2 text-right">Rate</span>
+            <span className="col-span-3 text-center">Qty</span>
+            <span className="col-span-2 text-right">Total</span>
+          </div>
+
+          {cart.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-gray-400 bg-white">
+              <ReceiptIcon />
+              <p className="text-sm font-medium mt-3 text-gray-400">
+                No services added
+              </p>
+              <p className="text-xs text-gray-300 mt-1">
+                Search and add services above
+              </p>
+            </div>
+          ) : (
+            <>
+              {cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-12 px-5 py-2.5 border-b border-gray-100 last:border-0 items-center group bg-white hover:bg-gray-50 transition-colors"
+                >
+                  <p className="col-span-5 text-sm font-medium text-gray-800">
+                    {item.name}
+                  </p>
+                  <p className="col-span-2 text-right text-sm text-gray-400">
+                    ₹{item.price}
+                  </p>
+
+                  {/* Quantity Controls */}
+                  <div className="col-span-3 flex items-center justify-center gap-2.5">
+                    <button
+                      onClick={() => setQty(item.id, item.qty - 1)}
+                      className="w-6 h-6 rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-600 flex items-center justify-center font-bold text-sm transition-all"
+                    >
+                      −
+                    </button>
+                    <span className="text-sm font-bold text-gray-900 w-4 text-center">
+                      {item.qty}
+                    </span>
+                    <button
+                      onClick={() => setQty(item.id, item.qty + 1)}
+                      className="w-6 h-6 rounded-full bg-gray-100 hover:bg-blue-100 hover:text-blue-600 text-gray-600 flex items-center justify-center font-bold text-sm transition-all"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <div className="col-span-2 flex items-center justify-end gap-2">
+                    <span className="text-sm font-bold text-gray-900">
+                      ₹{(item.price * item.qty).toFixed(2)}
+                    </span>
+                    <button
+                      onClick={() => setQty(item.id, 0)}
+                      className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-all"
+                    >
+                      <XIcon />
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Subtotal Row */}
+              <div className="grid grid-cols-12 px-5 py-2.5 bg-gray-50 border-t border-gray-200">
+                <span className="col-span-10 text-sm font-bold text-gray-600 text-right pr-4">
+                  Subtotal
+                </span>
+                <span className="col-span-2 text-right text-sm font-bold text-gray-900">
+                  {fmt(cart.reduce((s, x) => s + x.price * x.qty, 0))}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

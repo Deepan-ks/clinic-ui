@@ -3,14 +3,14 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
-import { ToastProvider } from "./components/common/ToastProvider";
+import { AppProviders } from "@/app/providers";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ToastProvider>
+    <AppProviders>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </ToastProvider>
+    </AppProviders>
   </StrictMode>,
 );
